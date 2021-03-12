@@ -2,6 +2,7 @@ const Joi = require('@hapi/joi');
 
 module.exports = {
   registerSchema: Joi.object().keys({
+    code: Joi.string(),
     email: Joi.string().email().required(),
     username: Joi.string().required(),
     password: Joi.string().required(),

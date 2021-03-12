@@ -1,7 +1,6 @@
 const router = require('express-promise-router')();
 const passport = require('passport');
 const passportConf = require('../app/middlewares/passportMiddleware');
-const verifyEmail = require('../app/middlewares/verifyEmailMiddleware');
 const AuthController = require('../app/controllers/authController');
 const { validateBody, schemas } = require('../app/helpers/routeHelper');
 
@@ -11,10 +10,10 @@ router.route('/register')
   .post(validateBody(schemas.registerSchema), AuthController.register);
 
 router.route('/login')
-  .post(validateBody(schemas.loginSchema), verifyEmail, passportLogin, AuthController.login);
+  .post(validateBody(schemas.loginSchema), passportLogin, AuthController.login);
 
 router.route('/forgot-password')
-  .post(validateBody(schemas.forgotPasswordSchema), verifyEmail, AuthController.forgotPassword);
+  .post(validateBody(schemas.forgotPasswordSchema), AuthController.forgotPassword);
 
 router.route('/reset-password')
   .post(validateBody(schemas.resetPasswordSchema), AuthController.resetPassword);
