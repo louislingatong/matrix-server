@@ -1,12 +1,16 @@
 {
-  "name": "nodejs-express-mongodb",
+  "name": "server",
   "version": "1.0.0",
-  "description": "Boilerplate for backend",
+  "description": "Backend",
   "private": true,
-  "scripts": {
-    "start": "nodemon -r dotenv/config index.js"
+  "engines": {
+    "node": "10.16.0"
   },
   "main": "index.js",
+  "scripts": {
+    "start": "nodemon -r dotenv/config index.js",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install"
+  },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "bcryptjs": "^2.4.3",
@@ -28,7 +32,6 @@
     "randomstring": "^1.1.5"
   },
   "devDependencies": {
-    "faker": "^5.4.0",
     "nodemon": "^2.0.7"
   },
   "author": "Louis Lingatong",

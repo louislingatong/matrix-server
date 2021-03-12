@@ -1,7 +1,9 @@
 # dependencies
 node_modules/
 
-client/.env
+storage/
+
+.env
 
 .idea
 .vscode

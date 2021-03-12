@@ -22,7 +22,7 @@ module.exports = {
     const profile = await Profile
       .findOne({ user })
       .populate('avatar', 'filename path')
-      .populate('user', 'status name username email');
+      .populate('user', 'status code name username email');
 
     res.status(200).json(profile);
   },

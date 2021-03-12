@@ -18,7 +18,7 @@ const profileSchema = new Schema({
   avatar: {
     type: Schema.Types.ObjectId,
     ref: 'image'
-  },
+  }
 }, {
   timestamps: {
     createdAt: 'createdAt',

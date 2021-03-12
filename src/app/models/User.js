@@ -15,9 +15,32 @@ const autoHashPassword = async function (next) {
   }
 };
 
+const autoPopulateMembers = function (next) {
+  try {
+    this.populate({
+      path: 'members',
+      select: 'level code name email',
+      populate: {
+        path: 'profile',
+        select: 'firstName lastName'
+      }
+    });
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
+
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
+  code: String,
+  group: String,
+  level: {
+    type: Number,
+    default: 0,
+    required: true
+  },
   name: {
     type: String,
     required: true,
@@ -48,7 +71,15 @@ const userSchema = new Schema({
     enum: user.roles,
     default: 'USER',
     required: true
-  }
+  },
+  leader: {
+    type: Schema.Types.ObjectId,
+    ref: 'user'
+  },
+  members: [{
+    type: Schema.Types.ObjectId,
+    ref: 'user'
+  }]
 }, {
   timestamps: {
     createdAt: 'createdAt',
@@ -57,7 +88,9 @@ const userSchema = new Schema({
 });
 
 userSchema
-  .pre('save', autoHashPassword);
+  .pre('save', autoHashPassword)
+  .pre('find', autoPopulateMembers)
+  .pre('findOne', autoPopulateMembers);
 
 userSchema.methods.validatePassword = async function(password) {
   try {

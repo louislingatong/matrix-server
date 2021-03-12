@@ -4,12 +4,12 @@ const randomstring  = require('randomstring');
 const User = require('../models/User');
 const Profile = require('../models/Profile');
 const Ticket = require('../models/Ticket');
-const { auth } = require('../../../config');
+const { auth, app } = require('../../../config');
 const { parseError } = require('../helpers/errorHelper');
 
 const newEventEmitter = require('../events/newTicketEvent');
 
-const generateAccessToken = user => {
+generateAccessToken = user => {
   return JWT.sign({
     iss: 'User',
     sub: user.id,
@@ -18,19 +18,39 @@ const generateAccessToken = user => {
   }, auth.clientSecret);
 }
 
-const createUser = async (data) => {
+generateCode = async () => {
+  const count = await User.countDocuments();
+  const currentDate = new Date();
+  const month = (currentDate.getMonth() + 1).toString().padStart(2, '0')
+  const year = currentDate.getFullYear();
+  const number = count.toString().padStart(4, '0');
+  return `${month}${year}${number}`;
+}
+
+createUser = async (data, leader) => {
   const user = new User(data);
   await user.save();
+  if (leader) {
+    await user.updateOne({
+      leader,
+      level: leader.level + 1
+    })
+    await leader.updateOne({
+      $push: {
+        members: user
+      }
+    });
+  }
   return user;
 };
 
-const createProfile = async (data) => {
+createProfile = async (data) => {
   const profile = new Profile(data);
   await profile.save();
   return profile;
 };
 
-const createTicket = async (data) => {
+createTicket = async (data) => {
   const ticket = new Ticket(data);
   await ticket.save();
   return ticket;
@@ -38,24 +58,41 @@ const createTicket = async (data) => {
 
 module.exports = {
   register: async (req, res, next) => {
-    const emailExist = await User.exists({email: req.body.email});
+    const emailExist = await User.findOne({email: req.body.email});
     if (emailExist) {
       return parseError(res, 422, { email: 'Email is already exist.' });
     }
 
-    const usernameExist = await User.exists({username: req.body.username});
+    const usernameExist = await User.findOne({username: req.body.username});
     if (usernameExist) {
       return parseError(res, 422, { username: 'Username is already exist.' });
     }
 
+    const leader = await User.findOne({code: req.body.code});
+
+    if (leader.role === 'USER') {
+      const membersCount = await User.countDocuments({ leader });
+      if (membersCount >= app.maxMembers) {
+        return parseError(res, 400, `Code ${leader.code} is already in maximum of ${app.maxMembers} members`);
+      }
+
+      if (leader.level >= app.maxLevels) {
+        return parseError(res, 400, `User level is limited only for ${app.maxLevels - 1} levels`);
+      }
+    }
+
+    const code = await generateCode();
+    const group = leader ? leader.group : code;
     const name = `${req.body.firstName} ${req.body.lastName}`
 
     const user = await createUser({
+      code,
+      group,
       name,
       username: req.body.username,
       email: req.body.email,
       password: req.body.password
-    })
+    }, leader)
 
     await createProfile( {
       user,
@@ -64,10 +101,8 @@ module.exports = {
     });
 
     const token = await randomstring.generate();
-    const ticket = await createTicket({
-      owner: user,
-      token
-    });
+
+    const ticket = await createTicket({ user, token });
 
     newEventEmitter.emit('sendVerifyEmailLink', user.name, user.email, ticket.token);
 
@@ -98,21 +133,21 @@ module.exports = {
   },
 
   resetPassword: async (req, res, next) => {
-    const ticket = await Ticket.findOne({ token: req.body.token }).populate('owner');
+    const ticket = await Ticket.findOne({ token: req.body.token }).populate('user');
     if (!ticket) {
       return parseError(res, 422, { token: 'Token is invalid'});
     }
 
     const expiredTicket = Date.now() > ticket.expireAt;
     if (expiredTicket) {
-      return parseError(res, 422, { token: 'Token is already expired'});
+      parseError(res, 422, { token: 'Token is already expired'});
     }
 
     const hashedPassword = await bcrypt.hash(req.body.password, 10)
 
-    await ticket.owner.updateOne({ password: hashedPassword });
+    await ticket.user.updateOne({ password: hashedPassword });
 
-    await ticket.remove();
+    ticket.remove();
 
     res.status(200).json({ message: 'Password has been changed successfully' });
   },

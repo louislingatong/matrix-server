@@ -19,8 +19,6 @@ app.use(express.urlencoded({ extended: true}));
 if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'dev') {
   app.use(logger('dev'));
 }
-// File Storage
-app.use('/storage', express.static('storage'))
 // Cors
 app.use(
   cors({
