@@ -9,11 +9,13 @@ const storage = multer.diskStorage({
   }
 });
 
+const upload = (options) => {
+  return multer({
+    storage,
+    ...options
+  });
+};
+
 module.exports = {
-  upload: (options) => {
-    return multer({
-      storage,
-      ...options
-    })
-  }
+  upload
 };

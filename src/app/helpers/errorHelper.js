@@ -1,14 +1,17 @@
-module.exports = {
-  parseError: (res, status, error) => {
-    switch (status) {
-      case 422:
-        const name = Object.keys(error)[0];
-        const message = error[name];
-        res.status(status).json({name, message});
-        break;
-      default:
-        res.status(status).send(error);
-        break;
-    }
+class Error {
+  constructor(status, message, error) {
+    this.status = status;
+    this.message = message;
+    this.error = error;
+  }
+
+  static badRequest(msg) {
+    throw new Error(400, msg);
+  }
+
+  static unprocessableEntity(error) {
+    throw new Error(422, 'Unprocessable Entity', error);
   }
 }
+
+module.exports = Error;

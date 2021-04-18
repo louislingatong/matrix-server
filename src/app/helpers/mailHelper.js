@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 const hbs = require('nodemailer-express-handlebars');
-const { mail } = require('../../../config');
 const path = require('path');
+const {mail} = require('../../../config');
 
 const mailConfig = {
   service: mail.service,
@@ -26,12 +26,14 @@ const handlebarsOptions = {
 
 transporter.use('compile', hbs(handlebarsOptions));
 
-module.exports = {
-  sendEmail: async (from, to, subject, template, context) => {
-    try {
-      await transporter.sendMail({from, to, subject, template, context});
-    } catch (err) {
-      console.log(err);
-    };
+const sendEmail = async (from, to, subject, template, context) => {
+  try {
+    await transporter.sendMail({from, to, subject, template, context});
+  } catch (e) {
+    throw e;
   }
+};
+
+module.exports = {
+  sendEmail
 }

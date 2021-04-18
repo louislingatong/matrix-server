@@ -14,7 +14,7 @@ dbConnect();
 // Read Json
 app.use(express.json());
 // Read Urls
-app.use(express.urlencoded({ extended: true}));
+app.use(express.urlencoded({extended: true}));
 // Logger
 if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'dev') {
   app.use(logger('dev'));
@@ -28,6 +28,8 @@ app.use(
 );
 // Routes
 app.use('/', router);
+// Route for storage
+app.use('/storage', express.static('storage'));
 // Error Handlers
 app.use(HandleRouteNotFoundMiddleware);
 app.use(HandleErrorMiddleware);

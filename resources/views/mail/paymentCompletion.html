@@ -1,0 +1,90 @@
+<table class="body-wrap">
+  <tr>
+    <td></td>
+    <td class="container" width="600">
+      <div class="content">
+        <table class="main" width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            <td class="content-wrap">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td class="content-block">
+                    <div class="order-number-payable-amount-wrap">
+                      <span>Order Number: <b>{{orderNumber}}</b></span>
+                      <span>Total Payable Amount: <b>{{totalPayableAmount}}</b></span>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="content-block text-center">
+                    <b>{{paymentMethodName paymentMethod}}</b>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="content-block text-center">
+                    Send your payment using the details below
+                  </td>
+                </tr>
+                <tr>
+                  <td class="content-block">
+                    <div class="payment-info-wrap text-center">
+                      {{#ifeq paymentMethod}}
+                        <h1>{{receiverPhoneNumber}}</h1>
+                        <p>{{receiverName}}</p>
+                        {{else}}
+                        <h1>{{receiverName}}</h1>
+                        <p>{{receiverPhoneNumber}}</p>
+                        <p>{{receiverAddress}}</p>
+                      {{/ifeq}}
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="content-block text-center">
+                    Click the button below to redirect you to the payment form
+                  </td>
+                </tr>
+                <tr>
+                  <td class="content-block">
+                    <hr/>
+                  <td/>
+                </tr>
+                <tr>
+                  <td class="content-block text-center">
+                    Fill the amount, {{ctrlRefNumber paymentMethod}}, receiver number fields
+                  </td>
+                </tr>
+                <tr>
+                  <td class="content-block">
+                    <hr/>
+                  <td/>
+                </tr>
+                <tr>
+                  <td class="content-block text-center">
+                    Attach a screenshot of your payment receipt
+                  </td>
+                </tr>
+                <tr>
+                  <td class="content-block">
+                    <hr/>
+                  <td/>
+                </tr>
+                <tr>
+                  <td class="content-block text-center">
+                    <a href="{{payOrderLink}}" class="btn-primary" itemprop="url">Payment Form</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="content-block text-center">
+                    If you did not create an order, no further action is required.
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </td>
+    <td></td>
+  </tr>
+</table>
