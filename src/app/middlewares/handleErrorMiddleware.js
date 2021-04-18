@@ -1,11 +1,13 @@
-module.exports = (err, req, res, next) => {
-  const status = err.status || 500;
+module.exports = (error, req, res, next) => {
+  const status = error.status || 500;
+  let json = {
+    status_code: status,
+    message: error.message,
+  }
 
-  res.status(status).json({
-    error: {
-      message: err.message
-    }
-  });
+  if (status === 422) {
+    json['error'] = error.error
+  }
 
-  console.error(err);
+  res.status(status).json(json);
 };

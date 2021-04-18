@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const { user } = require('../../../config');
+const {user} = require('../../../config');
 
 const autoHashPassword = async function (next) {
   try {
@@ -15,15 +15,11 @@ const autoHashPassword = async function (next) {
   }
 };
 
-const autoPopulateMembers = function (next) {
+const autoPopulateRelationships = function (next) {
   try {
     this.populate({
-      path: 'members',
-      select: 'level code name email',
-      populate: {
-        path: 'profile',
-        select: 'firstName lastName'
-      }
+      path: 'members leader',
+      select: 'level code name email'
     });
     next();
   } catch (err) {
@@ -89,10 +85,9 @@ const userSchema = new Schema({
 
 userSchema
   .pre('save', autoHashPassword)
-  .pre('find', autoPopulateMembers)
-  .pre('findOne', autoPopulateMembers);
+  .pre('findOne', autoPopulateRelationships);
 
-userSchema.methods.validatePassword = async function(password) {
+userSchema.methods.validatePassword = async function (password) {
   try {
     return await bcrypt.compare(password, this.password);
   } catch (err) {
@@ -100,4 +95,6 @@ userSchema.methods.validatePassword = async function(password) {
   }
 }
 
-module.exports = mongoose.model('user', userSchema);
+const User = mongoose.model('user', userSchema);
+
+module.exports = User;

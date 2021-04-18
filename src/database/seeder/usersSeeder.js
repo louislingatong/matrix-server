@@ -28,14 +28,21 @@ const adminProfileData = {
 }
 
 const seedUsers = async () => {
-  const adminExists = await User.exists({adminData});
-  if (adminExists) { return; }
-
-  const user = await createUser(adminData)
-  await createProfile({
-    ...adminProfileData,
-    user
-  });
+  try {
+    const newUsers = [];
+    const adminExists = await User.exists({email: adminData.email});
+    if (!adminExists) {
+      const user = await createUser(adminData)
+      await createProfile({
+        ...adminProfileData,
+        user
+      });
+      newUsers.push(user);
+    }
+    newUsers.length && console.log(`Seeded ${newUsers.length} new users`);
+  } catch (e) {
+    console.log('Error!', e.message);
+  }
 }
 
 module.exports = seedUsers

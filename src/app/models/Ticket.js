@@ -1,30 +1,47 @@
 const mongoose = require('mongoose');
-const { app } = require('../../../config');
+const randomstring = require('randomstring');
+const {app} = require('../../../config');
 
-const Schema = mongoose.Schema;
-
-const calculateExpirationTime = function (next) {
+const autoGenerateTokenAndExpirationTime = async function (next) {
   try {
+    let token;
+    let isUniqueToken =  true;
     const currentTime = new Date().getTime();
-    this.expireAt =  new Date(currentTime + (app.ticketExpirationMinutes * 60000));
+
+    while (isUniqueToken) {
+      token = await randomstring.generate();
+      isUniqueToken = await Ticket.exists({token});
+    }
+
+    this.token = token;
+    this.expireAt = new Date(currentTime + (app.ticketExpirationMinutes * 60000));
     next();
   } catch (err) {
     next(err);
   }
 };
 
+const autoPopulateRelationships = function (next) {
+  try {
+    this.populate({
+      path: 'owner',
+      select: 'name',
+    });
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
+
+const Schema = mongoose.Schema;
+
 const ticketSchema = new Schema({
   owner: {
     type: Schema.Types.ObjectId,
     ref: 'user'
   },
-  token: {
-    type: String,
-    required: true,
-  },
-  expireAt: {
-    type: Date
-  }
+  token: String,
+  expireAt: Date
 }, {
   timestamps: {
     createdAt: 'createdAt',
@@ -33,6 +50,9 @@ const ticketSchema = new Schema({
 });
 
 ticketSchema
-  .pre('save', calculateExpirationTime);
+  .pre('save', autoGenerateTokenAndExpirationTime)
+  .pre('findOne', autoPopulateRelationships);
 
-module.exports = mongoose.model('ticket', ticketSchema);
+const Ticket = mongoose.model('ticket', ticketSchema);
+
+module.exports = Ticket;

@@ -1,24 +1,16 @@
-const User = require('../models/User');
+const userService = require('../services/userService');
+
+const index = async (req, res, next) => {
+  const list = await userService.retrieveUsersByGroupAndLeader(req.user.group, req.user);
+  res.status(200).json({list});
+};
+
+const retrieveById = async (req, res, next) => {
+  const data = await userService.retrieveUserById(req.params['userId'])
+  res.status(200).json({data});
+}
 
 module.exports = {
-  index: async (req, res, next) => {
-    let users = await User
-      .find({
-        group: req.user.group, leader: req.user
-      })
-      .populate('profile', 'firstName lastName')
-      .select('level code name email');
-    res.status(200).json({ list: users });
-  },
-
-  getUser: async (req, res, next) => {
-    const user = await User
-      .findOne({
-        group: req.user.group,
-        _id: req.params.userId
-      })
-      .populate('profile', 'firstName lastName')
-      .select('level code name username email');
-    res.status(200).json({ data: user });
-  },
+  index,
+  retrieveById
 }

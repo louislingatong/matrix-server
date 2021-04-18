@@ -3,11 +3,15 @@ const seeder = require('../seeder');
 
 const dbConnect = async () => {
   try {
-    await mongoose.connect(process.env.DB_CONNECT, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true });
-    console.log('Connected to DB!')
+    await mongoose.connect(process.env.DB_CONNECT, {
+      useNewUrlParser: true,
+      useFindAndModify: false,
+      useCreateIndex: true,
+      useUnifiedTopology: true,
+    });
+    console.log('Connected to DB!');
     if (process.env.NODE_ENV === 'development' || 'dev') {
       await seeder.exec();
-      console.log('Seeders has been executed!')
     }
   } catch (err) {
 

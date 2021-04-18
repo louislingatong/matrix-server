@@ -3,10 +3,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const imageSchema = new Schema({
-  owner: {
-    type: Schema.Types.ObjectId,
-    ref: 'user'
-  },
   filename: {
     type: String,
     required: true,
@@ -22,4 +18,6 @@ const imageSchema = new Schema({
   }
 });
 
-module.exports = mongoose.model('image', imageSchema);
+const Image = mongoose.model('image', imageSchema);
+
+module.exports = Image;
