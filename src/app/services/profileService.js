@@ -55,18 +55,17 @@ const updateProfileByUser = async (user, data, session) => {
 
 const updateProfileAvatarByUser = async (user, file, session) => {
   try {
-    const {filename, path} = file;
-
+    const {filename, fieldname} = file;
     const avatar = await imageService.createImage({
       filename,
-      path
+      path: `${fieldname}\\${filename}`
     }, session);
 
     const profile = await profileRepository.retrieveProfile({user}, session);
 
     const image = profile['avatar'];
     if (image) {
-      await fs.unlinkSync(image.path);
+      await fs.unlinkSync(`storage\\${image.path}`);
       await image.remove();
     }
 

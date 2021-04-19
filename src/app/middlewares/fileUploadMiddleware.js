@@ -1,4 +1,5 @@
 const multer = require('multer');
+const _ = require('lodash');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -10,10 +11,10 @@ const storage = multer.diskStorage({
 });
 
 const upload = (options) => {
-  return multer({
-    storage,
-    ...options
-  });
+  if (_.isEmpty(options)) {
+    return multer({storage});
+  }
+  return multer(options);
 };
 
 module.exports = {

@@ -246,8 +246,10 @@ const createOrderPaymentByOrderNumber = async (orderNumber, data, file, session)
       Error.unprocessableEntity({orderNumber: 'Order number is invalid.'});
     }
 
+    const {filename, fieldname} = file;
     const receipt = await imageService.createImage({
-      ...file
+      filename,
+      path: `${fieldname}\\${filename}`
     }, session);
 
     const payment = await paymentService.createPayment({
@@ -256,7 +258,7 @@ const createOrderPaymentByOrderNumber = async (orderNumber, data, file, session)
     }, session);
 
     for (const order of orders) {
-      const updatedOrder = await orderRepository.retrieveUpdateOrder({_id: order._id}, {payment, status: 'PROCESSING'}, session)
+      const updatedOrder = await orderRepository.retrieveUpdateOrder({order}, {payment, status: 'PROCESSING'}, session)
       updatedOrders.push(updatedOrder);
     }
 

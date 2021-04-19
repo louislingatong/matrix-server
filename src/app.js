@@ -29,7 +29,8 @@ app.use(
 // Routes
 app.use('/', router);
 // Route for storage
-app.use('/storage', express.static('storage'));
+app.use('/avatar', express.static('storage/avatar/'));
+app.use('/receipt', express.static('storage/receipt/'));
 // Error Handlers
 app.use(HandleRouteNotFoundMiddleware);
 app.use(HandleErrorMiddleware);
