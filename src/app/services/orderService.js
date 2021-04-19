@@ -258,7 +258,7 @@ const createOrderPaymentByOrderNumber = async (orderNumber, data, file, session)
     }, session);
 
     for (const order of orders) {
-      const updatedOrder = await orderRepository.retrieveUpdateOrder(order, {payment, status: 'PROCESSING'}, session)
+      const updatedOrder = await orderRepository.retrieveUpdateOrder({_id: order._id}, {payment, status: 'PROCESSING'}, session)
       updatedOrders.push(updatedOrder);
     }
 
