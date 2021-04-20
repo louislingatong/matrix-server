@@ -24,7 +24,7 @@ router.route('/')
 router.route('/check-email-status')
   .get(validateBody(schemas.checkEmailSchema), OrderController.checkEmailStatus);
 
-router.route('/email-verify')
+router.route('/verify-email')
   .put(validateBody(schemas.verifyEmailSchema), OrderController.verifyEmail)
   .post(validateBody(schemas.issueEmailVerificationCodeSchema), OrderController.sendVerifyEmailCode);
 

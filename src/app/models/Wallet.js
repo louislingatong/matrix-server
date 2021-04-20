@@ -4,7 +4,7 @@ const autoPopulateTransactions = function (next) {
   try {
     this.populate({
       path: 'owner transactions',
-      select: 'name type amount'
+      select: 'name type amount message createdAt'
     });
     next();
   } catch (err) {

@@ -35,6 +35,8 @@ const calculateLevel1Share = (amount, percentage) => {
   return share;
 };
 
+const calculateTotalAmount = (items) => _.sumBy(items, (o) => o.quantity * o.price);
+
 const completedOrder = async (order, session) => {
   let user;
 
@@ -163,13 +165,11 @@ const createOrder = async (data, session) => {
 
     if (data.code) {
       const items = [];
-      let totalAmount = 0;
       for (let i = 0; i < data.items.length; i++) {
         const item = await productService.retrieveProduct({_id: data.items[i]['itemId']}, session);
         if (!item) {
           Error.unprocessableEntity({[`items[${i}].itemId`]: `Items[${i}].itemId with value ${data.items[i]['itemId']} is invalid.`});
         }
-        totalAmount += item['memberPrice'] * data.items[i]['quantity'];
         const orderItem = await createOrderItem({
           item,
           quantity: data.items[i]['quantity'],
@@ -183,22 +183,21 @@ const createOrder = async (data, session) => {
         deliveryAddress,
         paymentMethod,
         items,
-        totalAmount,
+        totalAmount: calculateTotalAmount(data.items),
       }, session);
 
       orderList.push(order);
     } else {
       let groupedItems = _.chain(data.items).groupBy((i) => i.owner).toPairs().value();
+
       for (let i = 0; i < groupedItems.length; i++) {
         const items = [];
-        let totalAmount = 0;
         const [key, value] = groupedItems[i];
         for (let i = 0; i < value.length; i++) {
           const item = await sellerProductService.retrieveSellerProduct({_id: value[i]['itemId']}, session);
           if (!item) {
             Error.unprocessableEntity({[`items[${i}].itemId`]: `Items[${i}].itemId with value ${value[i]['itemId']} is invalid.`});
           }
-          totalAmount += item['product']['price'] * value[i]['quantity'];
           const orderItem = await createOrderItem({
             item,
             quantity: data.items[i]['quantity'],
@@ -212,7 +211,7 @@ const createOrder = async (data, session) => {
           deliveryAddress,
           paymentMethod,
           items,
-          totalAmount,
+          totalAmount: calculateTotalAmount(value),
         }, session);
 
         orderList.push(order);
