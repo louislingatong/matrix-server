@@ -10,6 +10,19 @@ const createPayment = async (data, session) => {
   }
 };
 
+const retrievePayment = async (filter, session) => {
+  try {
+    const payment = await Payment
+      .findOne(filter)
+      .select('amount ctrlRefNumber')
+      .session(session)
+    return payment;
+  } catch (e) {
+    throw e;
+  }
+};
+
 module.exports = {
-  createPayment
+  createPayment,
+  retrievePayment
 };
