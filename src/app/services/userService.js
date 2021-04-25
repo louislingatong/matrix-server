@@ -32,7 +32,7 @@ const retrieveUser = async (filter, session) => {
   }
 };
 
-const countUsers = async (filter) => {
+const countUsers = async (filter, session) => {
   try {
     return await userRepository.countUsers(filter, session);
   } catch (e) {
