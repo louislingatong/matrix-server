@@ -8,6 +8,14 @@ const createUser = async (data, leader, session) => {
   }
 };
 
+const retrieveUsers = async () => {
+  try {
+    return await userRepository.retrieveUsers({role: 'USER'});
+  } catch (e) {
+    throw e;
+  }
+};
+
 const retrieveUsersByGroupAndLeader = async (group, leader, session) => {
   try {
     return await userRepository.retrieveUsers({group, leader}, session);
@@ -50,6 +58,7 @@ const checkUserExist = async (filter, session) => {
 
 module.exports = {
   createUser,
+  retrieveUsers,
   retrieveUsersByGroupAndLeader,
   retrieveUserById,
   retrieveUser,

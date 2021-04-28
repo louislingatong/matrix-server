@@ -15,7 +15,7 @@ const retrievePayment = async (filter, session) => {
     const payment = await Payment
       .findOne(filter)
       .select('amount ctrlRefNumber')
-      .session(session)
+      .session(session);
     return payment;
   } catch (e) {
     throw e;

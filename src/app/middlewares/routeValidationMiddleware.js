@@ -5,6 +5,8 @@ const authSchemas = require('../helpers/routeSchemas/authRouteSchemas');
 const profileSchemas = require('../helpers/routeSchemas/profileRouteSchemas');
 const orderSchemas = require('../helpers/routeSchemas/orderRouteSchemas');
 const sellerProductSchemas = require('../helpers/routeSchemas/sellerProductRouteSchemas');
+const productSchemas = require('../helpers/routeSchemas/productRouteSchemas');
+const paymentMethodSchemas = require('../helpers/routeSchemas/paymentMethodRouteSchemas');
 
 const Error = require('../helpers/errorHelper');
 
@@ -15,7 +17,9 @@ const schemas = {
   ...authSchemas,
   ...profileSchemas,
   ...orderSchemas,
-  ...sellerProductSchemas
+  ...sellerProductSchemas,
+  ...productSchemas,
+  ...paymentMethodSchemas
 };
 
 const validateParam = (schema, name) => {

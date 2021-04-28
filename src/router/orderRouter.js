@@ -40,6 +40,6 @@ router.route('/payment-download/:paymentId')
 router.route('/:orderNumber')
   .get(OrderController.retrieveByOrderNumber)
   .put(passportJWT, validateBody(schemas.updateOrderStatusSchema), OrderController.updateStatusByOrderNumber)
-  .post(upload({storage}).single('receipt'), validateBody(schemas.completeOrderPaymentSchema), OrderController.createOrderPayment);
+  .post(validateBody(schemas.completeOrderPaymentSchema), upload({storage}).single('receipt'), OrderController.createOrderPayment);
 
 module.exports = router;

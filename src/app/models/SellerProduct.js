@@ -5,7 +5,7 @@ const autoPopulateRelationships = function (next) {
     this
       .populate({
         path: 'owner product',
-        select: 'name price'
+        select: 'name description price'
       });
     next();
   } catch (err) {

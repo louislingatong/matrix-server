@@ -4,8 +4,10 @@ const paymentMethodsSeeder = require('./paymentMethodsSeeder');
 
 const exec = async () => {
   await usersSeeder();
-  await productsSeeder();
-  await paymentMethodsSeeder();
+  if (process.env.NODE_ENV === 'development') {
+    await productsSeeder();
+    await paymentMethodsSeeder();
+  }
 };
 
 module.exports = {exec};

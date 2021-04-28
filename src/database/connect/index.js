@@ -10,9 +10,7 @@ const dbConnect = async () => {
       useUnifiedTopology: true,
     });
     console.log('Connected to DB!');
-    if (process.env.NODE_ENV === 'development' || 'dev') {
-      await seeder.exec();
-    }
+    await seeder.exec();
   } catch (err) {
 
   }

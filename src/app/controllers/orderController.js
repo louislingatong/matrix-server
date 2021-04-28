@@ -2,6 +2,11 @@ const {startSession} = require('mongoose');
 
 const orderService = require('../services/orderService');
 
+const index = async (req, res, next) => {
+  const list = await orderService.retrieveOrders();
+  res.status(200).json({list});
+};
+
 const create = async (req, res, next) => {
   const session = await startSession();
   try {
@@ -31,11 +36,6 @@ const createOrderPayment = async (req, res, next) => {
     session.endSession();
     throw e;
   }
-};
-
-const index = async (req, res, next) => {
-  const list = await orderService.retrieveOrders();
-  res.status(200).json({list});
 };
 
 const retrieveById = async (req, res, next) => {

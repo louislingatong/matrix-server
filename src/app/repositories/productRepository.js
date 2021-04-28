@@ -14,7 +14,7 @@ const retrieveProducts = async (filter, session) => {
   try {
     const products = await Product
       .find(filter)
-      .select('name memberPrice')
+      .select('name description price memberPrice')
       .session(session);
     return products;
   } catch (e) {
@@ -26,9 +26,34 @@ const retrieveProduct = async (filter, session) => {
   try {
     const product = await Product
       .findOne(filter)
-      .select('name memberPrice')
-      .session(session)
+      .select('name description price memberPrice')
+      .session(session);
     return product;
+  } catch (e) {
+    throw e;
+  }
+};
+
+const updateProduct = async (filter, data, session) => {
+  try {
+    const product = await Product
+      .findOneAndUpdate(
+        filter,
+        data,
+        {new: true, session})
+      .select('name description memberPrice');
+    return product;
+  } catch (e) {
+    throw e;
+  }
+};
+
+const deleteProduct = async (filter, session) => {
+  try {
+    const result = await Product
+      .findOneAndDelete(filter)
+      .session(session);
+    return result;
   } catch (e) {
     throw e;
   }
@@ -37,5 +62,7 @@ const retrieveProduct = async (filter, session) => {
 module.exports = {
   createProduct,
   retrieveProducts,
-  retrieveProduct
+  retrieveProduct,
+  updateProduct,
+  deleteProduct
 }

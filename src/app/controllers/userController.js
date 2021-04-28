@@ -1,6 +1,11 @@
 const userService = require('../services/userService');
 
 const index = async (req, res, next) => {
+  const list = await userService.retrieveUsers();
+  res.status(200).json({list});
+};
+
+const retrieveAllMembers = async (req, res, next) => {
   const list = await userService.retrieveUsersByGroupAndLeader(req.user.group, req.user);
   res.status(200).json({list});
 };
@@ -12,5 +17,6 @@ const retrieveById = async (req, res, next) => {
 
 module.exports = {
   index,
+  retrieveAllMembers,
   retrieveById
 }

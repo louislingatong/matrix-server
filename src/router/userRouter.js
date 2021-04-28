@@ -10,6 +10,9 @@ const passportJWT = passport.authenticate('jwt', {session: false});
 router.route('/')
   .get(passportJWT, UserController.index);
 
+router.route('/members')
+  .get(passportJWT, UserController.retrieveAllMembers);
+
 router.route('/:userId')
   .get(passportJWT, validateParam(schemas.idSchema, 'userId'), UserController.retrieveById);
 
